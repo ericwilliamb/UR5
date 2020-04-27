@@ -1,7 +1,7 @@
 close all
 clear all
 clc
-%% construÁ„o
+%% constru√ß√£o
 
 a2=425;%dimensoes (mm)
 a3=392;
@@ -19,7 +19,7 @@ Elo(3) = Link([0 d3 a3 0]);
 Elo(4) = Link([0 d4 0 pi/2]);
 Elo(5) = Link([0 d5 0 -pi/2]);
 Elo(6) = Link([0 d6 0 0]);
-Robo = SerialLink(Elo);%constrÛi robo
+Robo = SerialLink(Elo);%constr√≥i robo
 Robo.name = 'UR5';
 
 %% matriz A(x-1 a x)
@@ -32,7 +32,7 @@ syms theta4;
 syms theta5; 
 syms theta6;
 
-%par‚metros:
+%par√¢metros:
 %   a alpha   d theta
 DH=[0   pi/2    d1   theta1;
     a2    0   d2   theta2;
@@ -61,7 +61,7 @@ Atemp = [cos(DH(x,4))   -sin(DH(x,4))*cos(alpha)   sin(DH(x,4))*sin(alpha)    a*
       
 end
 
-%% Calculo da matriz de transformaÁ„o:
+%% Calculo da matriz de transforma√ß√£o:
  T(:,:,1)= A(:,:,1);
  
  for x=2:1:GDL
@@ -98,25 +98,28 @@ Q1 = [0 pi/4 -pi/2 pi/4 0 0];%retorna
 %Qfinal = Robo.ikine(T);
 
 
-%% animaÁ„o
+%% anima√ß√£o
 
-TRAJ = jtraj(Q0, Q1, (0:.03:1));%posicao inicial, final, vetor de tempo (pode ser substituido por int=passos)
-Robo.plot(TRAJ);%mostra animaÁ„o da trajetoria
+TRAJ0= jtraj(Q1, Q0, (0:.08:1));
+Robo.plot(TRAJ0);
 
-TRAJ1= jtraj(Q1, Q2, (0:.03:1));
+TRAJ = jtraj(Q0, Q1, (0:.08:1));%posicao inicial, final, vetor de tempo (pode ser substituido por int=passos)
+Robo.plot(TRAJ);%mostra anima√ß√£o da trajetoria
+
+TRAJ1= jtraj(Q1, Q2, (0:.08:1));
 Robo.plot(TRAJ1);
 
-TRAJ2 = jtraj(Q2, Q3, (0:.03:1));
+TRAJ2 = jtraj(Q2, Q3, (0:.08:1));
 Robo.plot(TRAJ2);
 
-TRAJ3 = jtraj(Q3, Q0, (0:.03:1));
+TRAJ3 = jtraj(Q3, Q0, (0:.08:1));
 Robo.plot(TRAJ3);
 
-TRAJ4 = jtraj(Q0, Q1, (0:.03:1));
+TRAJ4 = jtraj(Q0, Q1, (0:.08:1));
 Robo.plot(TRAJ4);
 
-TRAJ5 = jtraj(Q1, Q4, (0:.03:1));
+TRAJ5 = jtraj(Q1, Q4, (0:.08:1));
 Robo.plot(TRAJ5);
 
-TRAJ6 = jtraj(Q4, Q1, (0:.03:1));
+TRAJ6 = jtraj(Q4, Q1, (0:.08:1));
 Robo.plot(TRAJ6);
