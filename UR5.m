@@ -1,7 +1,7 @@
 close all
 clear all
 clc
-%% construção
+%% constru��o
 
 a2=425;%dimensoes (mm)
 a3=392;
@@ -19,7 +19,7 @@ Elo(3) = Link([0 d3 a3 0]);
 Elo(4) = Link([0 d4 0 pi/2]);
 Elo(5) = Link([0 d5 0 -pi/2]);
 Elo(6) = Link([0 d6 0 0]);
-Robo = SerialLink(Elo);%constrói robo
+Robo = SerialLink(Elo);%constr�i robo
 Robo.name = 'UR5';
 
 %% matriz A(x-1 a x)
@@ -61,6 +61,11 @@ Atemp = [cos(DH(x,4))   -sin(DH(x,4))*cos(alpha)   sin(DH(x,4))*sin(alpha)    a*
       
 end
 
+'Matriz do Link 1'
+A(:,:, 1)
+
+
+
 %% Calculo da matriz de transformação:
  T(:,:,1)= A(:,:,1);
  
@@ -72,54 +77,62 @@ end
      T(:,:,x)= simplify(T(:,:,x));
  
  end
+ 
+ 'Matriz de Transformacao de 1 para 2'
+ T(:,:, 2)
+% 1 to 3
+% 1to 4 ....
+%% Workspace
+
+%hold on;
+N=3000; 
+theta1=-pi+2*pi*rand(N,1);    %limit of joint1
+theta2=-pi+2*pi*rand(N,1);    %limit of joint2
+theta3=-pi+2*pi*rand(N,1);    %limit of joint3
+theta4=-pi+2*pi*rand(N,1);    %limit of joint4
+theta5=-pi+2*pi*rand(N,1);    %limit of joint5
+theta6=-pi+2*pi*rand(N,1);    %limit of joint6
+figure(1)
+for i=1:1:N 
+    qq=[theta1(i),theta2(i),theta3(i),theta4(i),theta5(i),theta6(i)];
+    f=Robo.fkine(qq);
+    hold on;
+    drawnow;        % This is to see the points appearing in the picture while running
+    plot3(f.t(1),f.t(2),f.t(3),'b.','MarkerSize',1.5);
+%pause(0.001) %activate it if you want to see the points that appear in
+%at each while
+end
+
+%% Inverse kinematics
+T=[1 0 0 0; 0 1 0 0; 0 0 1 -500; 0 0 0 1];
+q = Robo.ikine(T, [0,0,0,0,0,0]);
+
+Movement= jtraj(Q0, q, (0:.08:1));
+Robo.plot(Movement);
 
 
-%% plots
-
-Q0 = [0 0 0 0 0 0];%%posicao inicial na esteira
-%Robo.plot(Q0);
-Q1 = [0 pi/4 -pi/2 pi/4 0 0];%recua
-%Robo.plot(Q1);
-Q2 = [(pi/2) pi/4 -pi/2 pi/4 0 0];%gira ccw
-%Robo.plot(Q2);
-Q3 = [0 pi/4 -pi/2 pi/4 0 0];%gira cw
-%Robo.plot(Q3);
-Q0 = [0 0 0 0 0 0];%%esteira novamente
-%Robo.plot(Q0);
-Q1 = [0 pi/4 -pi/2 pi/4 0 0];%recua
-%Robo.plot(Q1);
-Q4 = [-(pi/2) pi/4 -pi/2 pi/4 0 0];%gira cw
-%Robo.plot(Q4);
-Q1 = [0 pi/4 -pi/2 pi/4 0 0];%retorna
-%Robo.plot(Q1);
-
-%% cinematica
-
-%Qfinal = Robo.ikine(T);
+%% Pick and place animation
 
 
-%% animação
+% R R R X
+% R R R Y
+% R R R Z
+% 0 0 0 1
+%Resting position
+start_position=[817; -191.8; 100];
+default_rotation = [1 0 0 ; 0 0 -1; 0  1 0];
+T_start = getTransformationMatrix(start_position, default_rotation);
 
-TRAJ0= jtraj(Q1, Q0, (0:.08:1));
-Robo.plot(TRAJ0);
+pick_position = [191.8; 504.6; 100];
+T_pick = getTransformationMatrix(pick_position, default_rotation);
+pick2_position = [191.8; 504.6; 0];
+T_pick2 = getTransformationMatrix(pick2_position, default_rotation);
 
-TRAJ = jtraj(Q0, Q1, (0:.08:1));%posicao inicial, final, vetor de tempo (pode ser substituido por int=passos)
-Robo.plot(TRAJ);%mostra animação da trajetoria
-
-TRAJ1= jtraj(Q1, Q2, (0:.08:1));
-Robo.plot(TRAJ1);
-
-TRAJ2 = jtraj(Q2, Q3, (0:.08:1));
-Robo.plot(TRAJ2);
-
-TRAJ3 = jtraj(Q3, Q0, (0:.08:1));
-Robo.plot(TRAJ3);
-
-TRAJ4 = jtraj(Q0, Q1, (0:.08:1));
-Robo.plot(TRAJ4);
-
-TRAJ5 = jtraj(Q1, Q4, (0:.08:1));
-Robo.plot(TRAJ5);
-
-TRAJ6 = jtraj(Q4, Q1, (0:.08:1));
-Robo.plot(TRAJ6);
+Q_start= Robo.ikine(T_start);
+Q_pick = Robo.ikunc(T_pick);
+Q_pick2 = Robo.ikunc(T_pick2);
+Start_Pick=jtraj(Q_start, Q_pick, (0:.08:2));
+Pick_Pick2 = jtraj(Q_pick, Q_pick2, (0:.08:0.8));
+Pick2_Pick = jtraj(Q_pick2, Q_pick, (0:.08:0.8));
+Pick_Start = jtraj(Q_pick, Q_start,(0:.08:2) );
+Robo.plot([Start_Pick; Pick_Pick2; Pick2_Pick; Pick_Start]);
