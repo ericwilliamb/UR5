@@ -1,6 +1,7 @@
 close all
 clear all
 clc
+addpath('functions')
 %% Robot construction.
 deg = pi/180;
 a2=425;%dimensoes (mm)
@@ -27,8 +28,8 @@ Robo.name = 'UR5';
 % R R R Y
 % R R R Z
 % 0 0 0 1
-default_rotation = [1 0 0 ; 0 0 -1; 0  1 0];
 
+default_rotation = [1 0 0 ; 0 0 -1; 0  1 0];
 
 start_position=[817; -191.8; 100];
 pick_position = [191.8; 504.6; 100];
@@ -38,13 +39,12 @@ T_start = getTransformationMatrix(start_position, default_rotation);
 T_pick = getTransformationMatrix(pick_position, default_rotation);
 T_pick2 = getTransformationMatrix(pick2_position, default_rotation);
 
-Q_start= Robo.ikine(T_start);
-Q_pick = Robo.ikine(T_pick);
-Q_pick2 = Robo.ikine(T_pick2);
+Q_start= Robo.ikine(T_start, 'verbose');
+Q_pick = Robo.ikine(T_pick, 'verbose');
+Q_pick2 = Robo.ikine(T_pick2, 'verbose');
 
 Start_Pick=jtraj(Q_start, Q_pick, (0:.08:2));
 Pick_Pick2 = jtraj(Q_pick, Q_pick2, (0:.08:0.8));
 Pick2_Pick = jtraj(Q_pick2, Q_pick, (0:.08:0.8));
 Pick_Start = jtraj(Q_pick, Q_start,(0:.08:2) );
 Robo.plot([Start_Pick; Pick_Pick2; Pick2_Pick; Pick_Start]);
-
