@@ -1,6 +1,6 @@
-clc
-clear
-close all
+%clc
+%clear
+%close all
 addpath('functions')
 %% Robot construction.
 deg = pi/180;
@@ -32,33 +32,54 @@ T_pick = getTransformationMatrix(pick_position, default_rotation);
 T_pick2 = getTransformationMatrix(pick2_position, default_rotation);
 Q_start= Robo.ikine(T_start, 'verbose');
 Q_pick = Robo.ikine(T_pick, 'verbose');
-Q_pick2 = Robo.ikine(T_pick2, 'verbose');
+Q_pick2 = Robo.ikine(T_pick2, 'verbose');   
 
 %% Interpolating
-theta0_space = [Q_start(1) Q_pick(1) Q_pick2(1) Q_start(1)];
-dt = 1;
-time_space = [ 0*dt 1*dt 2*dt 3*dt]; 
-time_space_new = 0:0.005:3*dt;
-pos_theta0 = interp1(time_space, theta0_space, time_space_new); 
+%Theta0
+waypoints = [Q_start; Q_pick; Q_pick2; Q_pick2; Q_start];
+
+theta_space = zeros(6,5);
+for i=1:6
+    for j = 1:5
+       theta_space(i,j) = [waypoints(j,i)]; 
+    end
+end
+
+dt = 4;
+
+[x1_s, th1_s] = computePosition(theta_space(1,:), dt);
+signal1 = [x1_s' th1_s'];
+[x2_s, th2_s] = computePosition(theta_space(2,:), dt);
+signal2 = [x2_s' th2_s'];
+[x3_s, th3_s] = computePosition(theta_space(3,:), dt);
+signal3 = [x3_s' th3_s'];
+[x4_s, th4_s] = computePosition(theta_space(4,:), dt);
+signal4 = [x4_s' th4_s'];
+[x5_s, th5_s] = computePosition(theta_space(5,:), dt);
+signal5 = [x5_s' th5_s'];
+[x6_s, th6_s] = computePosition(theta_space(6,:), dt);
+signal6 = [x6_s' th6_s'];
+
+
+
+
+[x_v, y_v, x_a, y_a] = calcVelocityAcceleration(x1_s, th1_s);
+
 
 %% Plotting
-[vel_theta0, acel_theta0] = calcVelocityAcceleration(time_space_new, pos_theta0);
-plot(time_space,theta0_space,'o',time_space_new,pos_theta0,':.');
+
 subplot(3,1,1)
-plot(time_space_new, pos_theta0)
+plot(x1_s, th1_s)
 xlabel('t')
 ylabel('Positions')
-legend('X','Y')
 subplot(3,1,2)
-plot(time_space_new(1:600), vel_theta0)
+plot(x_v, y_v)
 xlabel('t')
 ylabel('Velocities')
-legend('X','Y')
 subplot(3,1,3)
-plot(time_space_new(1:599), acel_theta0)
+plot(x_a, y_a)
 xlabel('t')
 ylabel('Acceleration')
-legend('X','Y')
 
 
 

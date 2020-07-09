@@ -1,6 +1,6 @@
-%close all
-%clear all
-%clc
+close all
+clear all
+clc
 addpath('functions')
 %%Robot data
 deg = pi/180;
@@ -24,9 +24,9 @@ syms theta5 real;
 syms theta6 real;
 
 q = [theta1 theta2 theta3 theta4 theta5 theta6];
-syms theta1_v theta2_v theta3_v theta4_v theta5_v theta6_v real
+syms theta1_v theta2_v theta3_v theta4_v theta5_v theta6_v
 q_v = [theta1_v theta2_v theta3_v theta4_v theta5_v theta6_v];
-syms theta1_a theta2_a theta3_a theta4_a theta5_a theta6_a real
+syms theta1_a theta2_a theta3_a theta4_a theta5_a theta6_a
 q_a = [theta1_a theta2_a theta3_a theta4_a theta5_a theta6_a];
 %parâmetros:
 %   a alpha   d theta
@@ -163,11 +163,9 @@ for k=1:GDL
     for j=1:GDL
         for i=1:GDL
             c(i,j,k)=( diff(D(k,j),q(i)) + diff(D(k,i),q(j)) - diff(D(i,j),q(k)) )/2;
-            C(j,k,i) = ( diff(D(k,j),q(i)) + diff(D(k,i),q(j)) - diff(D(i,j),q(k)) )/2;
         end
     end
 end
-
 
 
 %% Potencial Energy
@@ -181,13 +179,9 @@ P5 = m(5)* g * O5(3);
 P6 = m(6)* g * O6(3);
 P = P1 + P2 + P3 + P4 + P5 + P6;
 
-G_component = [diff(P,q(1)) ; diff(P,q(2)) ; diff(P,q(3)) ; diff(P,q(4)) ; diff(P,q(5)) ; diff(P,q(6))];
-
-    
 %Torques
 %Torque k =  Dkj * q`` + Cijk * q`* q`` + diff(P, qk),  there are 6 k`s. i
 %and j range from 1 to n.
-
 torque = sym(zeros(1,GDL));
 for k=1:GDL
     torque(k) = torque(k) + diff(P,q(k)); % Adding gravity Component
@@ -198,19 +192,6 @@ for k=1:GDL
         end 
     end
 end
-syms torque1 torque2 torque3 torque4 torque5 torque6 real
-%solTor1 = solve(torque(1) == torque1, theta1_a)
-
-%MATRIZ FORM
-%torques = [torque1; torque2; torque3; torque4; torque5; torque6];
-%C_component =  C(:,:,1) * q_v(1) + C(:,:,2) * q_v(2) + C(:,:,3) * q_v(3) + C(:,:,4) * q_v(4) + C(:,:,5) * q_v(5) + C(:,:,6) * q_v(6);
-%G_component = [diff(P,q(1)) ; diff(P,q(2)) ; diff(P,q(3)) ; diff(P,q(4)) ; diff(P,q(5)) ; diff(P,q(6))];
-
-
-
-
-%torques = D * q_a' + C_component * q_v' + G_component;
-%torquess = [torque1; torque2; torque3; torque4; torque5; torque6];
-%accelerations = inv(D) * (torquess - C_component * q_v' - G_component);
-%   
-
+syms torque1
+solTor1 = solve(torque(1) == torque1, theta1_a)
+%t1 = simplify(subs(torque(1), [theta2 theta2_v theta3 theta3_v theta4 theta4_v theta5 theta5_v], [0 0 0 0 0 0 0 0]))
