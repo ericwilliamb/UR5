@@ -45,7 +45,7 @@ for i=1:6
     end
 end
 
-dt = 4;
+dt = 0.5;
 
 [x1_s, th1_s] = computePosition(theta_space(1,:), dt);
 signal1 = [x1_s' th1_s'];
@@ -56,20 +56,21 @@ signal3 = [x3_s' th3_s'];
 [x4_s, th4_s] = computePosition(theta_space(4,:), dt);
 signal4 = [x4_s' th4_s'];
 [x5_s, th5_s] = computePosition(theta_space(5,:), dt);
+th5_s = th5_s+0.1;
 signal5 = [x5_s' th5_s'];
 [x6_s, th6_s] = computePosition(theta_space(6,:), dt);
 signal6 = [x6_s' th6_s'];
 
 
 
-
-[x_v, y_v, x_a, y_a] = calcVelocityAcceleration(x1_s, th1_s);
+chosen = th5_s;
+[x_v, y_v, x_a, y_a] = calcVelocityAcceleration(x1_s, chosen);
 
 
 %% Plotting
 
 subplot(3,1,1)
-plot(x1_s, th1_s)
+plot(x1_s, chosen)
 xlabel('t')
 ylabel('Positions')
 subplot(3,1,2)

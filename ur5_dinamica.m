@@ -143,7 +143,7 @@ JW3 = J3(4:6,:);
 JW4 = J4(4:6,:);
 JW5 = J5(4:6,:);
 JW6 = J6(4:6,:);
-m = [3.7,8.393,2.275,1.219,1.219,.1879];
+m = [3.7,8.393,2.275,1.219,1.219,.1879]; %kg
 
 %dinamica
 D1 = m(1) * JV1' * JV1 + JW1'*R1 * I1 * R1'*JW1;
@@ -203,7 +203,7 @@ syms torque1 torque2 torque3 torque4 torque5 torque6 real
 
 %MATRIZ FORM
 %torques = [torque1; torque2; torque3; torque4; torque5; torque6];
-%C_component =  C(:,:,1) * q_v(1) + C(:,:,2) * q_v(2) + C(:,:,3) * q_v(3) + C(:,:,4) * q_v(4) + C(:,:,5) * q_v(5) + C(:,:,6) * q_v(6);
+C_component =  C(:,:,1) * q_v(1) + C(:,:,2) * q_v(2) + C(:,:,3) * q_v(3) + C(:,:,4) * q_v(4) + C(:,:,5) * q_v(5) + C(:,:,6) * q_v(6);
 %G_component = [diff(P,q(1)) ; diff(P,q(2)) ; diff(P,q(3)) ; diff(P,q(4)) ; diff(P,q(5)) ; diff(P,q(6))];
 
 

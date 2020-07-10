@@ -149,8 +149,8 @@ Jdet=[ J(1,1) J(1,2) J(1,3);
  
 %% Inverse kinematics
 
-TF = [1 0 0 0.35; 0 1 0 0.45; 0 0 1 0.08; 0 0 0 1];
-q = Robo2.ikine(TF,'qo',Q0,'mask',[1, 1, 1, 1, 0 ,0],'ilimit',100,'rlimit',1000,'verbose');
+TF = [1 0 0 0.65; 0 0 -1 -82.5; 0 1 0 -94.56; 0 0 0 1];
+q = Robo2.ikine(TF,'qo',Q0,'mask',[1, 1, 1, 0, 0 ,0],'ilimit',100,'rlimit',1000,'verbose');
 
 Movement= jtraj(Q0, q, (0:.08:1));
 Robo2.plot(Movement,'workspace',W);
