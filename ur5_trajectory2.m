@@ -4,14 +4,14 @@
 addpath('functions')
 %% Robot construction.
 deg = pi/180;
-a2=425/1000;%dimensoes (m)
-a3=392/1000;
-d1=89.2/1000;
+a2=0.425;%dimensoes (m)
+a3=0.39243;
+d1 = 0.0892;
 d2=0;
 d3=0;
-d4=109.3/1000;
-d5=94.75/1000;
-d6=82.5/1000;
+d4=0.109;
+d5=0.093;
+d6=0.082;
 
 Elo(1) = Link([0 d1 0 pi/2]);%theta, d, a, alpha, 0/1(opcional: rev/prism)
 Elo(2) = Link([0 d2 a2 0]);
@@ -23,64 +23,112 @@ Robo = SerialLink(Elo);%constrói robo
 Robo.name = 'UR5';
 
 %% Getting KeyPoints
-start_position=[0.817; -0.1918; 0.101];
-pick_position = [0.1918; 0.5046; 0.09998];
-pick2_position = [0.1918; 0.5046; 0];
+
+
+A =[0.642; 0.088; 0.175];
+B=[0.344; 0.473; 0.175];
+C=[0.344; 0.473; 0.030];
+D=[0.344; 0.473; 0.175];
+E=[0.344; -0.473; 0.175];
+F=[0.344; -0.473; 0.030];
+
 default_rotation = [1 0 0 ; 0 0 -1; 0  1 0];
-T_start = getTransformationMatrix(start_position, default_rotation);
-T_pick = getTransformationMatrix(pick_position, default_rotation);
-T_pick2 = getTransformationMatrix(pick2_position, default_rotation);
-Q_start= Robo.ikine(T_start, 'verbose');
-Q_pick = Robo.ikine(T_pick, 'verbose');
-Q_pick2 = Robo.ikine(T_pick2, 'verbose');   
+T_A = getTransformationMatrix(A, default_rotation);
+Q_A= Robo.ikine(T_A, 'verbose');
 
-%% Interpolating
-%Theta0
-waypoints = [Q_start; Q_pick; Q_pick2; Q_pick2; Q_start];
+T_B = getTransformationMatrix(B, default_rotation);
+Q_B= Robo.ikine(T_B, 'verbose');
 
+T_C = getTransformationMatrix(C, default_rotation);
+Q_C= Robo.ikine(T_C, 'verbose');
+
+T_D = getTransformationMatrix(D, default_rotation);
+Q_D= Robo.ikine(T_D, 'verbose');
+
+T_E = getTransformationMatrix(E, default_rotation);
+Q_E= Robo.ikine(T_E, 'verbose');
+
+T_F = getTransformationMatrix(F, default_rotation);
+Q_F= Robo.ikine(T_F, 'verbose');
+
+traj1=jtraj(Q_A, Q_B, (0:.08:2));
+traj2=jtraj(Q_B, Q_C, (0:.08:2));
+traj3=jtraj(Q_C, Q_D, (0:.08:2));
+traj4=jtraj(Q_D, Q_E, (0:.08:2));
+traj5=jtraj(Q_E, Q_F, (0:.08:2));
+%Robo.plot([traj1; traj2; traj3; traj4; traj5]);
+
+%Q_pick = Robo.ikine(T_pick, 'verbose');
+%Q_pick2 = Robo.ikine(T_pick2, 'verbose');   
+% 
+% %% Interpolating
+% %Theta0
+ waypoints = [Q_A; Q_B; Q_C; Q_D; Q_E; Q_F];
+ 
 theta_space = zeros(6,5);
 for i=1:6
-    for j = 1:5
-       theta_space(i,j) = [waypoints(j,i)]; 
+    for j = 1:6
+        theta_space(i,j) = [waypoints(j,i)]; 
     end
 end
-
-dt = 0.5;
-
+dt = 0.008;
+ 
 [x1_s, th1_s] = computePosition(theta_space(1,:), dt);
+[x1_v, y1_v, x1_a, y1_a] = calcVelocityAcceleration(x1_s, th1_s);
 signal1 = [x1_s' th1_s'];
+signal1_v = [x1_v' y1_v'];
+signal1_a = [x1_a' y1_a'];
+
 [x2_s, th2_s] = computePosition(theta_space(2,:), dt);
+[x2_v, y2_v, x2_a, y2_a] = calcVelocityAcceleration(x2_s, th2_s);
 signal2 = [x2_s' th2_s'];
+signal2_v = [x2_v' y2_v'];
+signal2_a = [x2_a' y2_a'];
+
 [x3_s, th3_s] = computePosition(theta_space(3,:), dt);
+[x3_v, y3_v, x3_a, y3_a] = calcVelocityAcceleration(x3_s, th3_s);
 signal3 = [x3_s' th3_s'];
+signal3_v = [x3_v' y3_v'];
+signal3_a = [x3_a' y3_a'];
+
 [x4_s, th4_s] = computePosition(theta_space(4,:), dt);
+[x4_v, y4_v, x4_a, y4_a] = calcVelocityAcceleration(x4_s, th4_s);
 signal4 = [x4_s' th4_s'];
+signal4_v = [x4_v' y4_v'];
+signal4_a = [x4_a' y4_a'];
+
 [x5_s, th5_s] = computePosition(theta_space(5,:), dt);
-th5_s = th5_s+0.1;
+th5_s = 0.4*ones(size(th5_s));
+[x5_v, y5_v, x5_a, y5_a] = calcVelocityAcceleration(x5_s, th5_s);
 signal5 = [x5_s' th5_s'];
+signal5_v = [x5_v' y5_v'];
+signal5_a = [x5_a' y5_a'];
+
 [x6_s, th6_s] = computePosition(theta_space(6,:), dt);
+%th6_s = 0.4*ones(size(th6_s));
+[x6_v, y6_v, x6_a, y6_a] = calcVelocityAcceleration(x6_s, th6_s);
 signal6 = [x6_s' th6_s'];
+signal6_v = [x6_v' y6_v'];
+signal6_a = [x6_a' y6_a'];
 
 
-
-chosen = th5_s;
-[x_v, y_v, x_a, y_a] = calcVelocityAcceleration(x1_s, chosen);
 
 
 %% Plotting
-
-subplot(3,1,1)
-plot(x1_s, chosen)
-xlabel('t')
-ylabel('Positions')
-subplot(3,1,2)
-plot(x_v, y_v)
-xlabel('t')
-ylabel('Velocities')
-subplot(3,1,3)
-plot(x_a, y_a)
-xlabel('t')
-ylabel('Acceleration')
+chosen = [th5_s(1:end-2); y5_v(1:end-1); y5_a];
+% 
+% subplot(3,1,1)
+% plot(x1_s(1:end-2), chosen(1,:))
+% xlabel('t')
+% ylabel('Positions')
+% subplot(3,1,2)
+% plot(x1_v(1:end-1), chosen(2,:))
+% xlabel('t')
+% ylabel('Velocities')
+% subplot(3,1,3)
+% plot(x1_a, chosen(3,:))
+% xlabel('t')
+% ylabel('Acceleration')
 
 
 
