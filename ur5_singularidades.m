@@ -118,9 +118,9 @@ J11 = J6(1:3,1:3);
 J22 = J6(4:6,4:6);
 
 %Arm singularities are given by det(J11) = 0
-dJ11 = simplify(det(J11), 'IgnoreAnalyticConstraints',true);
-Sol = solve(dJ11 == 0, 'ReturnConditions',true, 'Real',true);
+%dJ11 = simplify(det(J11), 'IgnoreAnalyticConstraints',true);
+%Sol = solve(dJ11 == 0, 'ReturnConditions',true, 'Real',true);
 
 %Wrist Singularities are given by det(J22) = 0 
-dJ22 =simplify(det(J22));
-Sol2 = solve(dJ22 ==0);
+%dJ22 =simplify(det(J22));
+%Sol2 = solve(dJ22 ==0);
