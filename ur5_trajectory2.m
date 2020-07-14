@@ -131,15 +131,5 @@ signal6_a = [x6_a' y6_a'];
 % 
 % 
 % 
-% 
-% for i=1:20:length(th1_s)
-%     Tm = Robo.fkine([th1_s(i), th2_s(i), th3_s(i), th4_s(i), th5_s(i), th6_s(i)]);
-%     x(i) = Tm.t(1);
-%     y(i) = Tm.t(2);
-%     z(i) = Tm.t(3);
-%     Robo.plot([th1_s(i), th2_s(i), th3_s(i), th4_s(i), th5_s(i), th6_s(i)]);
-%     drawnow;
-%     hold on;
-%     plot3(x(i),y(i),z(i),'b.');
-%     Robo.plot([th1_s(i), th2_s(i), th3_s(i), th4_s(i), th5_s(i), th6_s(i)])
-% end
+%
+

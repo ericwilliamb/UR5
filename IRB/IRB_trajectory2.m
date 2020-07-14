@@ -69,19 +69,19 @@ for i=1:4
 end
 dt = 0.008;
  
-[x1_s, th1_s] = computePosition(theta_space(1,:), dt,0);
+[x1_s, th1_s] = computePositionIRB(theta_space(1,:), dt,0);
 [x1_v, y1_v, x1_a, y1_a] = calcVelocityAcceleration(x1_s, th1_s);
 signal1 = [x1_s' th1_s'];
 signal1_v = [x1_v' y1_v'];
 signal1_a = [x1_a' y1_a'];
 
-[x2_s, th2_s] = computePosition(theta_space(2,:), dt,0);
+[x2_s, th2_s] = computePositionIRB(theta_space(2,:), dt,0);
 [x2_v, y2_v, x2_a, y2_a] = calcVelocityAcceleration(x2_s, th2_s);
 signal2 = [x2_s' th2_s'];
 signal2_v = [x2_v' y2_v'];
 signal2_a = [x2_a' y2_a'];
 
-[x3_s, th3_s] = computePosition(theta_space(3,:), dt,'poly3');
+[x3_s, th3_s] = computePositionIRB(theta_space(3,:), dt,'poly3');
 th3_s = abs(th3_s)
 %th3_s = abs(th3_s)
 [x3_v, y3_v, x3_a, y3_a] = calcVelocityAcceleration(x3_s, th3_s);
@@ -89,7 +89,7 @@ signal3 = [x3_s' th3_s'];
 signal3_v = [x3_v' y3_v'];
 signal3_a = [x3_a' y3_a'];
 
-[x4_s, th4_s] = computePosition(theta_space(4,:), dt,0);
+[x4_s, th4_s] = computePositionIRB(theta_space(4,:), dt,0);
 [x4_v, y4_v, x4_a, y4_a] = calcVelocityAcceleration(x4_s, th4_s);
 signal4 = [x4_s' th4_s'];
 signal4_v = [x4_v' y4_v'];
